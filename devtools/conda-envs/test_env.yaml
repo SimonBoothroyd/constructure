@@ -1,0 +1,26 @@
+name: test
+channels:
+  - openeye
+  - conda-forge
+dependencies:
+
+  - python
+  - pip
+
+    # --- Core ---
+  - pydantic
+    # """ OpenEye """
+  - openeye-toolkits
+    # """ RDKit """
+  - rdkit
+
+    # --- Testing ---
+  - pytest
+  - pytest-cov
+  - codecov
+  - openff-toolkit
+
+    # --- Developer ---
+  - isort
+  - black
+  - flake8
