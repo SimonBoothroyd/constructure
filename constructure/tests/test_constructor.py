@@ -69,7 +69,9 @@ def test_attach_substituents(constructor):
         ("[R][C+](=O)", "acyl"),
         ("[R]Cl", "halogen"),
         ("Cl[R]", "halogen"),
-        ("[R]O", None),
+        ("[R]O", "hetero"),
+        ("[R]N", "hetero"),
+        ("[R][Li]", None),
     ],
 )
 def test_classify_substituent(constructor, substituent, expected):

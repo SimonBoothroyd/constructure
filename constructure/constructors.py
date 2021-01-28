@@ -48,7 +48,7 @@ class Constructor(abc.ABC):
     @abc.abstractmethod
     def classify_substituent(
         cls, substituent: str
-    ) -> Optional[Literal["hydrogen", "aryl", "alkyl", "acyl", "halogen"]]:
+    ) -> Optional[Literal["hydrogen", "aryl", "alkyl", "acyl", "halogen", "hetero"]]:
         """A function which will attempt to classify a substituent as being either
         a hydrogen, aryl, alkyl, acyl or a halogen.
 
@@ -235,7 +235,7 @@ class RDKitConstructor(Constructor):
     @requires_package("rdkit")
     def classify_substituent(
         cls, substituent: str
-    ) -> Optional[Literal["hydrogen", "aryl", "alkyl", "acyl", "halogen"]]:
+    ) -> Optional[Literal["hydrogen", "aryl", "alkyl", "acyl", "halogen", "hetero"]]:
 
         from rdkit import Chem
 
@@ -266,6 +266,10 @@ class RDKitConstructor(Constructor):
         # Check for halogen
         if attachment_atom.GetAtomicNum() in [9, 17, 35, 53]:
             return "halogen"
+
+        # Check for hetero
+        if attachment_atom.GetAtomicNum() in [7, 8]:
+            return "hetero"
 
         # Check for alkyl
         if (
@@ -338,7 +342,7 @@ class OpenEyeConstructor(Constructor):
     @requires_oe_package("oechem")
     def classify_substituent(
         cls, substituent: str
-    ) -> Optional[Literal["hydrogen", "aryl", "alkyl", "acyl", "halogen"]]:
+    ) -> Optional[Literal["hydrogen", "aryl", "alkyl", "acyl", "halogen", "hetero"]]:
 
         from openeye import oechem
 
@@ -370,6 +374,10 @@ class OpenEyeConstructor(Constructor):
         # Check for halogen
         if attachment_atom.GetAtomicNum() in [9, 17, 35, 53]:
             return "halogen"
+
+        # Check for hetero
+        if attachment_atom.GetAtomicNum() in [7, 8]:
+            return "hetero"
 
         # Check for alkyl
         if (

@@ -8,7 +8,7 @@
 The ``constructure`` framework aims to provide utilities for generating a diverse set of molecules from a set of common 
 organic scaffolds.
 
-There are currently 131 scaffolds included by default in the framework which can be [viewed here](https://github.com/SimonBoothroyd/constructure/blob/main/docs/scaffolds.png). 
+There are currently 143 scaffolds included by default in the framework which can be [viewed here](https://github.com/SimonBoothroyd/constructure/blob/main/docs/scaffolds.png). 
 This set were generated based on those functionalities support by [``checkmol``.](https://homepage.univie.ac.at/norbert.haider/cheminf/fgtable.pdf) 
 
 ### Installation
