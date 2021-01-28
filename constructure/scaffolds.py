@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Dict, List, Literal
 
 from pydantic import BaseModel
 
-RGroup = Literal["hydrogen", "acyl", "alkyl", "aryl", "halogen"]
+RGroup = Literal["hydrogen", "acyl", "alkyl", "aryl", "halogen", "hetero"]
 
 if TYPE_CHECKING:
     RGroup = str
@@ -106,7 +106,15 @@ SCAFFOLDS = {
             2: ["hydrogen", "alkyl", "aryl"],
         },
     ),
-    # ketene acetal derivative
+    "ketene acetal derivative": Scaffold(
+        smiles="C([R1])([R2])=C([R3])([R4])",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl"],
+            2: ["hydrogen", "alkyl", "aryl"],
+            3: ["hetero"],
+            4: ["hetero"],
+        },
+    ),
     "carbonyl hydrate": Scaffold(
         smiles="C([R1])(O)(O)([R2])",
         r_groups={
@@ -547,9 +555,25 @@ SCAFFOLDS = {
             3: ["hydrogen", "alkyl", "aryl"],
         },
     ),
-    # oxohetarene
-    # thioxohetarene
-    # iminohetarene
+    "oxohetarene": Scaffold(
+        smiles="n1([R1])ccccc1=O",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl"],
+        },
+    ),
+    "thioxohetarene": Scaffold(
+        smiles="n1([R1])ccccc1=S",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl"],
+        },
+    ),
+    "iminohetarene": Scaffold(
+        smiles="N([R2])=C1C=CC=CN1([R1])",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl"],
+            2: ["hydrogen", "alkyl", "aryl"],
+        },
+    ),
     # orthocarboxylic acid deriv.
     "carboxylic acid orthoester": Scaffold(
         smiles="C([R1])(O([R2]))(O([R3]))(O([R4]))",
@@ -979,14 +1003,58 @@ SCAFFOLDS = {
     ),
     # phosphoric acid deriv.
     # phosphoric acid.
-    # phosphoric acid ester
-    # phosphoric acid halide
-    # phosphoric acid amide
+    "phosphoric acid ester": Scaffold(
+        smiles="P([R2])([R3])(=O)O([R1])",
+        r_groups={
+            1: ["alkyl", "aryl"],
+            2: ["hetero", "halogen"],
+            3: ["hetero", "halogen"],
+        },
+    ),
+    "phosphoric acid halide": Scaffold(
+        smiles="P([R1])([R2])([R3])(=O)",
+        r_groups={
+            1: ["halogen"],
+            2: ["hetero", "halogen"],
+            3: ["hetero", "halogen"],
+        },
+    ),
+    "phosphoric acid amide": Scaffold(
+        smiles="P([R3])([R4])(=O)N([R1])([R2])",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl"],
+            2: ["hydrogen", "alkyl", "aryl"],
+            3: ["hetero", "halogen"],
+            4: ["hetero", "halogen"],
+        },
+    ),
     # thiophosphoric acid deriv.
     # thiophosphoric acid
-    # thiophosphoric acid ester
-    # thiophosphoric acid halide
-    # thiophosphoric acid amide
+    "thiophosphoric acid ester": Scaffold(
+        smiles="P([R2])([R3])(=S)O([R1])",
+        r_groups={
+            1: ["alkyl", "aryl"],
+            2: ["hetero", "halogen"],
+            3: ["hetero", "halogen"],
+        },
+    ),
+    "thiophosphoric acid halide": Scaffold(
+        smiles="P([R1])([R2])([R3])(=S)",
+        r_groups={
+            1: ["halogen"],
+            2: ["hetero", "halogen"],
+            3: ["hetero", "halogen"],
+        },
+    ),
+    "thiophosphoric acid amide": Scaffold(
+        smiles="P([R3])([R4])(=S)N([R1])([R2])",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl"],
+            2: ["hydrogen", "alkyl", "aryl"],
+            3: ["hetero", "halogen"],
+            4: ["hetero", "halogen"],
+        },
+    ),
     # phosphonic acid deriv.
     "phosphonic acid": Scaffold(
         smiles="P([R1])(=O)(O)(O)",
@@ -1013,7 +1081,20 @@ SCAFFOLDS = {
     ),
     # boronic acid deriv.
     # boronic acid
-    # boronic acid ester
+    "boronic acid": Scaffold(
+        smiles="B([R1])(O)(O)",
+        r_groups={
+            1: ["alkyl", "aryl"],
+        },
+    ),
+    "boronic acid ester": Scaffold(
+        smiles="B([R1])([R3])O([R2])",
+        r_groups={
+            1: ["alkyl", "aryl"],
+            2: ["alkyl", "aryl"],
+            3: ["halogen", "hetero"],
+        },
+    ),
     "alkene": Scaffold(
         smiles="C([R1])([R2])=C([R3])([R4])",
         r_groups={
