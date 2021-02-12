@@ -1126,4 +1126,56 @@ SCAFFOLDS = {
             1: ["hydrogen", "alkyl", "aryl"],
         },
     ),
+    # Non-checkmol
+    "phenyl": Scaffold(
+        smiles="c1([R1])ccccc1",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl"],
+        },
+    ),
+    "benzyl": Scaffold(
+        smiles="C([R1])c1ccccc1",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl"],
+        },
+    ),
+    "o-phenylene": Scaffold(
+        smiles="c1([R1])c([R2])cccc1",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl", "acyl", "hetero", "halogen"],
+            2: ["hydrogen", "alkyl", "aryl", "acyl", "hetero", "halogen"],
+        },
+    ),
+    "m-phenylene": Scaffold(
+        smiles="c1([R1])cc([R2])ccc1",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl", "acyl", "hetero", "halogen"],
+            2: ["hydrogen", "alkyl", "aryl", "acyl", "hetero", "halogen"],
+        },
+    ),
+    "p-phenylene": Scaffold(
+        smiles="c1([R1])ccc([R2])cc1",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl", "acyl", "hetero", "halogen"],
+            2: ["hydrogen", "alkyl", "aryl", "acyl", "hetero", "halogen"],
+        },
+    ),
+    "o-pyridine": Scaffold(
+        smiles="n1c([R1])cccc1",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl", "acyl", "hetero", "halogen"],
+        },
+    ),
+    "m-pyridine": Scaffold(
+        smiles="n1cc([R1])ccc1",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl", "acyl", "hetero", "halogen"],
+        },
+    ),
+    "p-pyridine": Scaffold(
+        smiles="n1ccc([R1])cc1",
+        r_groups={
+            1: ["hydrogen", "alkyl", "aryl", "acyl", "hetero", "halogen"],
+        },
+    ),
 }

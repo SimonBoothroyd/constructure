@@ -8,8 +8,11 @@
 The ``constructure`` framework aims to provide utilities for generating a diverse set of molecules from a set of common 
 organic scaffolds.
 
-There are currently 143 scaffolds included by default in the framework which can be [viewed here](https://github.com/SimonBoothroyd/constructure/blob/main/docs/scaffolds.png). 
+There are currently 153 scaffolds included by default in the framework which can be [viewed here](https://github.com/SimonBoothroyd/constructure/blob/main/docs/scaffolds.png). 
 This set were generated based on those functionalities support by [``checkmol``.](https://homepage.univie.ac.at/norbert.haider/cheminf/fgtable.pdf) 
+
+Further, the SMILES patterns of 27 common substituents are [also provided](https://github.com/SimonBoothroyd/constructure/blob/main/docs/substituents.png) 
+ready for attachment onto the scaffolds. 
 
 ### Installation
 
@@ -87,10 +90,29 @@ smiles = Constructor.enumerate_combinations(
     substituents={
         1: ["[R]C", "[R]c1ccccc1"],
         2: ["[R]C(C)(C)", "[R]CC"],
-        3: ["[R][H]"]
+        3: ["[R][H]", "[R]CC"]
     }
 )
 ```
+
+or, using the built-in substituent SMILES:
+
+```python
+# Import the default substituents dictionary.
+from constructure.substituents import SUBSTITUENTS
+
+smiles = Constructor.enumerate_combinations(
+    scaffold,
+    substituents={
+        1: [SUBSTITUENTS["methyl"], SUBSTITUENTS["phenyl"]],
+        2: [SUBSTITUENTS["isopropyl"], SUBSTITUENTS["ethyl"]],
+        3: [SUBSTITUENTS["hydrogen"], SUBSTITUENTS["ethyl"]]
+    }
+)
+```
+
+Here the `substituents` dictionary is used to specify the substituents to consider for the differently labelled R group
+attachment points on a scaffold.
 
 The generated structures can then easily be visualised using the built in `smiles_to_image_grid` functions:
 
