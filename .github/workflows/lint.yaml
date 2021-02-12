@@ -33,11 +33,14 @@ jobs:
       - name: Run isort
         run: |
           isort --recursive --check-only constructure
+          isort --recursive --check-only examples
 
       - name: Run black
         run: |
           black constructure --check
+          black examples --check
 
       - name: Run flake8
         run: |
           flake8 constructure
+          flake8 examples
