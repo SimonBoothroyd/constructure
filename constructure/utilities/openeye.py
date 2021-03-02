@@ -13,7 +13,9 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T")
 
 
-def requires_oe_package(package_name: Literal["oechem", "oedepict"]):
+def requires_oe_package(
+    package_name: Literal["oechem", "oedepict"]
+):  # pragma: no cover
     """A decorator which checks that the required OpenEye package is installed
     and licensed.
 
@@ -21,8 +23,8 @@ def requires_oe_package(package_name: Literal["oechem", "oedepict"]):
         package_name: The name of the required OpenEye package.
     """
 
-    @requires_package(f"openeye.{package_name}")
     def inner_decorator(function):
+        @requires_package(f"openeye.{package_name}")
         @functools.wraps(function)
         def wrapper(*args, **kwargs):
 
@@ -50,7 +52,7 @@ def smiles_to_image_grid(
     cols: int = 8,
     cell_width: int = 200,
     cell_height: int = 200,
-):
+):  # pragma: no cover
     """Saves a list of SMILES patterns as an image of their corresponding 2D structures.
 
     Args:
@@ -92,7 +94,7 @@ def smiles_to_image_grid(
 
 
 @requires_oe_package("oechem")
-def remove_duplicate_smiles(smiles: List[str]) -> List[str]:
+def remove_duplicate_smiles(smiles: List[str]) -> List[str]:  # pragma: no cover
     """Returns the list of unique SMILES patterns in a specified list.
 
     Args:

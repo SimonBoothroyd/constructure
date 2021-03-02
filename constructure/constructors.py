@@ -268,7 +268,7 @@ class RDKitConstructor(Constructor):
             return "halogen"
 
         # Check for hetero
-        if attachment_atom.GetAtomicNum() in [7, 8]:
+        if attachment_atom.GetAtomicNum() in [7, 8, 15, 16]:
             return "hetero"
 
         # Check for alkyl
@@ -299,7 +299,7 @@ class RDKitConstructor(Constructor):
         return remove_duplicate_smiles(smiles)
 
 
-class OpenEyeConstructor(Constructor):
+class OpenEyeConstructor(Constructor):  # pragma: no cover
     """A class which provides methods for enumerating the possible attachments of
     substituents to different molecular scaffolds using the OpenEye toolkit."""
 
@@ -376,7 +376,7 @@ class OpenEyeConstructor(Constructor):
             return "halogen"
 
         # Check for hetero
-        if attachment_atom.GetAtomicNum() in [7, 8]:
+        if attachment_atom.GetAtomicNum() in [7, 8, 15, 16]:
             return "hetero"
 
         # Check for alkyl

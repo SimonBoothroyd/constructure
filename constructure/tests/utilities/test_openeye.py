@@ -9,6 +9,8 @@ from constructure.utilities.openeye import (
     smiles_to_image_grid,
 )
 
+pytest.importorskip("openeye.oechem")
+
 
 @requires_oe_package("oechem")
 def dummy_oe_function():

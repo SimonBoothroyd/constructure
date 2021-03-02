@@ -1,11 +1,19 @@
+import importlib
+
 import pytest
 
-from constructure.constructors import OpenEyeConstructor, RDKitConstructor
+from constructure.constructors import Constructor, OpenEyeConstructor, RDKitConstructor
 from constructure.scaffolds import Scaffold
 from constructure.tests import does_not_raise
 
+try:
+    importlib.import_module("openeye")
+    CONSTRUCTORS = [OpenEyeConstructor, RDKitConstructor]
+except ImportError:
+    CONSTRUCTORS = [RDKitConstructor]
 
-@pytest.mark.parametrize("constructor", [OpenEyeConstructor, RDKitConstructor])
+
+@pytest.mark.parametrize("constructor", CONSTRUCTORS)
 @pytest.mark.parametrize(
     "scaffold, expected",
     [
@@ -32,12 +40,12 @@ from constructure.tests import does_not_raise
         ),
     ],
 )
-def test_n_replaceable_groups(constructor, scaffold, expected):
+def test_n_replaceable_groups(constructor: Constructor, scaffold, expected):
     assert constructor.n_replaceable_groups(scaffold) == expected
 
 
-@pytest.mark.parametrize("constructor", [OpenEyeConstructor, RDKitConstructor])
-def test_attach_substituents(constructor):
+@pytest.mark.parametrize("constructor", CONSTRUCTORS)
+def test_attach_substituents(constructor: Constructor):
 
     from rdkit import Chem
 
@@ -54,7 +62,7 @@ def test_attach_substituents(constructor):
     assert smiles == "CC(Cl)c1ccccc1"
 
 
-@pytest.mark.parametrize("constructor", [OpenEyeConstructor, RDKitConstructor])
+@pytest.mark.parametrize("constructor", CONSTRUCTORS)
 @pytest.mark.parametrize(
     "substituent, expected",
     [
@@ -74,12 +82,12 @@ def test_attach_substituents(constructor):
         ("[R][Li]", None),
     ],
 )
-def test_classify_substituent(constructor, substituent, expected):
+def test_classify_substituent(constructor: Constructor, substituent, expected):
     assert constructor.classify_substituent(substituent) == expected
 
 
-@pytest.mark.parametrize("constructor", [OpenEyeConstructor, RDKitConstructor])
-def test_classify_substituent_error(constructor):
+@pytest.mark.parametrize("constructor", CONSTRUCTORS)
+def test_classify_substituent_error(constructor: Constructor):
 
     with pytest.raises(ValueError, match="The substituent C does not contain the "):
         constructor.classify_substituent("C")
@@ -130,11 +138,11 @@ def test_validate_substituents(substituents, expected_raises):
     )
 
     with expected_raises:
-        OpenEyeConstructor.validate_substituents(scaffold, substituents)
+        RDKitConstructor.validate_substituents(scaffold, substituents)
 
 
-@pytest.mark.parametrize("constructor", [OpenEyeConstructor, RDKitConstructor])
-def test_remove_duplicate_smiles(constructor):
+@pytest.mark.parametrize("constructor", CONSTRUCTORS)
+def test_remove_duplicate_smiles(constructor: Constructor):
 
     unique_smiles = constructor._remove_duplicate_smiles(
         ["C(Cl)(F)(Br)", "C(F)(Cl)(Br)"]
@@ -143,8 +151,8 @@ def test_remove_duplicate_smiles(constructor):
     assert len(unique_smiles) == 1
 
 
-@pytest.mark.parametrize("constructor", [OpenEyeConstructor, RDKitConstructor])
-def test_enumerate_combinations_combinatorial(constructor):
+@pytest.mark.parametrize("constructor", CONSTRUCTORS)
+def test_enumerate_combinations_combinatorial(constructor: Constructor):
 
     from rdkit import Chem
 
