@@ -1,6 +1,5 @@
 name: test
 channels:
-  - openeye
   - conda-forge
 dependencies:
 
@@ -9,8 +8,6 @@ dependencies:
 
     # --- Core ---
   - pydantic
-    # """ OpenEye """
-  - openeye-toolkits
     # """ RDKit """
   - rdkit
 
@@ -18,7 +15,6 @@ dependencies:
   - pytest
   - pytest-cov
   - codecov
-  - openff-toolkit
 
     # --- Developer ---
   - isort

@@ -2,7 +2,6 @@ import functools
 import importlib
 
 _CONDA_INSTALLATION_COMMANDS = {
-    "openff.toolkit": "conda install -c conda-forge openff-toolkit",
     "openeye": "conda install -c openeye openeye-toolkits",
     "rdkit": "conda install -c conda-forge rdkit",
 }
