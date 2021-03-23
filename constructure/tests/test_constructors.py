@@ -171,3 +171,24 @@ def test_enumerate_combinations_combinatorial(constructor: Constructor):
     assert {"CCCC(O)CCC=O", "CCC(O)CCC=O", "CCC(O)CCC(C)=O", "CCCC(O)CCC(C)=O"} == {
         Chem.MolToSmiles(Chem.MolFromSmiles(smiles)) for smiles in enumerated_smiles
     }
+
+
+@pytest.mark.parametrize("constructor", CONSTRUCTORS)
+@pytest.mark.parametrize(
+    "validate, expected_raises",
+    [(False, None), (True, pytest.raises(ValueError, match="group only accepts "))],
+)
+def test_enumerate_combinations_validation(
+    constructor: Constructor, validate: bool, expected_raises
+):
+
+    if expected_raises is None:
+        expected_raises = does_not_raise()
+
+    scaffold = Scaffold(smiles="C([R1])", r_groups={1: ["alkyl"]})
+
+    with expected_raises:
+
+        constructor.enumerate_combinations(
+            scaffold=scaffold, substituents={1: ["[R]O"]}, validate=validate
+        )

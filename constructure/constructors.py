@@ -143,6 +143,7 @@ class Constructor(abc.ABC):
         scaffold: Scaffold,
         substituents: Dict[int, List[str]],
         mode: Literal["combinatorial"] = "combinatorial",
+        validate: bool = True,
     ) -> List[str]:
         """Attempts to enumerate the possible ways of attaching a set of substituents to
         a specified scaffold.
@@ -159,13 +160,17 @@ class Constructor(abc.ABC):
                 the substituents to the scaffold. The number of these can grow large
                 for scaffolds with several R groups and multiple possible substituents
                 per R group.
+            validate: Whether to try and validate whether a substituent is suitable
+                for attachment to a scaffold. This check is crude and will allow
+                unphysical chemistry's to pass through.
 
         Returns
             A list of SMILES patterns representing the possible decorated scaffolds.
         """
 
         # Make sure the substituents are appropriate for the specified scaffold.
-        cls.validate_substituents(scaffold, substituents)
+        if validate:
+            cls.validate_substituents(scaffold, substituents)
 
         if mode == "combinatorial":
 
