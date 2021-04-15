@@ -1,6 +1,7 @@
-from typing import TYPE_CHECKING, Dict, List, Literal
+from typing import TYPE_CHECKING, Dict, List
 
 from pydantic import BaseModel
+from typing_extensions import Literal
 
 RGroup = Literal["hydrogen", "acyl", "alkyl", "aryl", "halogen", "hetero"]
 
