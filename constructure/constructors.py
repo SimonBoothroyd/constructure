@@ -1,7 +1,9 @@
 import abc
 import itertools
 import re
-from typing import Dict, List, Literal, Optional
+from typing import Dict, List, Optional
+
+from typing_extensions import Literal
 
 from constructure.scaffolds import Scaffold
 from constructure.utilities import requires_package
