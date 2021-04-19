@@ -75,7 +75,7 @@ def test_n_replaceable_groups(constructor: Constructor, scaffold, expected):
                 r_groups={i: ["hydrogen"] for i in (2, 3, 4, 7)},
             ),
             [2, 3, 4, 7],
-        )
+        ),
     ],
 )
 def test_get_replaceable_r_groups(constructor: Constructor, scaffold, expected):
@@ -180,18 +180,15 @@ def test_validate_substituents(substituents, expected_raises):
 
 
 def test_validate_replaceable_r_groups():
-    scaffold = Scaffold(smiles="C([R1])([R1])([R3])([R4])",
-                        r_groups={1: ["hydrogen"],
-                                  2: ["alkyl"],
-                                  3: ["aryl"],
-                                  4: ["halogen"]},)
+    scaffold = Scaffold(
+        smiles="C([R1])([R1])([R3])([R4])",
+        r_groups={1: ["hydrogen"], 2: ["alkyl"], 3: ["aryl"], 4: ["halogen"]},
+    )
     err = "Duplicate R-group values found"
     with pytest.raises(ValueError, match=err):
-        RDKitConstructor.validate_substituents(scaffold,
-                                               {1: ["[R][H]"],
-                                                2: ["[R]C"],
-                                                3: ["[R]c1ccccc1"],
-                                                4: ["[R]Cl"]})
+        RDKitConstructor.validate_substituents(
+            scaffold, {1: ["[R][H]"], 2: ["[R]C"], 3: ["[R]c1ccccc1"], 4: ["[R]Cl"]}
+        )
 
 
 @pytest.mark.parametrize("constructor", CONSTRUCTORS)

@@ -99,8 +99,7 @@ class Constructor(abc.ABC):
 
         if len(set(expected_r_groups)) != len(expected_r_groups):
             r_group_str = ", ".join(sorted(f"R{i}" for i in expected_r_groups))
-            raise ValueError("Duplicate R-group values found in " +
-                             r_group_str)
+            raise ValueError("Duplicate R-group values found in " + r_group_str)
 
         missing_r_groups = {i for i in expected_r_groups if i not in substituents}
         missing_r_groups.update(i for i in substituents if len(substituents[i]) == 0)
@@ -236,13 +235,15 @@ class RDKitConstructor(Constructor):
     def get_replaceable_r_groups(cls, scaffold: Scaffold) -> List[int]:
         from rdkit import Chem
 
-        scaffold_smiles = re.sub(r"\(\[R(?P<num>[1-9])+]\)",
-                                 r"([\1*:\g<num>])",
-                                 scaffold.smiles)
+        scaffold_smiles = re.sub(
+            r"\(\[R(?P<num>[1-9])+]\)", r"([\1*:\g<num>])", scaffold.smiles
+        )
         scaffold_molecule = Chem.MolFromSmiles(scaffold_smiles)
-        numbers = [atom.GetAtomMapNum()
-                   for atom in scaffold_molecule.GetAtoms()
-                   if atom.GetAtomMapNum() != 0]
+        numbers = [
+            atom.GetAtomMapNum()
+            for atom in scaffold_molecule.GetAtoms()
+            if atom.GetAtomMapNum() != 0
+        ]
         return sorted(numbers)
 
     @classmethod
@@ -362,8 +363,11 @@ class OpenEyeConstructor(Constructor):  # pragma: no cover
 
         scaffold_molecule = oechem.OEMol()
         oechem.OESmilesToMol(scaffold_molecule, scaffold.smiles)
-        numbers = [atom.GetMapIdx() for atom in scaffold_molecule.GetAtoms()
-                   if atom.GetMapIdx() != 0]
+        numbers = [
+            atom.GetMapIdx()
+            for atom in scaffold_molecule.GetAtoms()
+            if atom.GetMapIdx() != 0
+        ]
         return sorted(numbers)
 
     @classmethod
