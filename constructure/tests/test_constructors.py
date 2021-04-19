@@ -211,9 +211,9 @@ def test_remove_duplicate_smiles(constructor: Constructor):
             {1: ["[R]C", "[R]CC"], 2: ["[R]C=O", "[R]C(=O)C"]},
         ),
         (
-            "C([R9])C(O)CC([R2])",
-            {9: ["alkyl"], 2: ["acyl"]},
-            {9: ["[R]C", "[R]CC"], 2: ["[R]C=O", "[R]C(=O)C"]},
+            "C([R9])C(O)CC([R32])",
+            {9: ["alkyl"], 32: ["acyl"]},
+            {9: ["[R]C", "[R]CC"], 32: ["[R]C=O", "[R]C(=O)C"]},
         ),
     ],
 )

@@ -236,12 +236,12 @@ class RDKitConstructor(Constructor):
     def get_replaceable_r_groups(cls, scaffold: Scaffold) -> List[int]:
         from rdkit import Chem
 
-        scaffold_smiles = re.sub(r"\(\[R([1-9])+]\)", r"([\1*:\1])", scaffold.smiles)
+        scaffold_smiles = re.sub(r"\(\[R([0-9]+)]\)", r"([\1*:\1])", scaffold.smiles)
         scaffold_molecule = Chem.MolFromSmiles(scaffold_smiles)
         numbers = [
             atom.GetAtomMapNum()
             for atom in scaffold_molecule.GetAtoms()
-            if atom.GetAtomMapNum() != 0
+            if atom.HasProp("dummyLabel")
         ]
         return sorted(numbers)
 
@@ -254,7 +254,7 @@ class RDKitConstructor(Constructor):
         from rdkit import Chem
         from rdkit.Chem import rdChemReactions
 
-        scaffold_smiles = re.sub(r"\(\[R([1-9])+]\)", r"([\1*])", scaffold.smiles)
+        scaffold_smiles = re.sub(r"\(\[R([0-9]+)]\)", r"([\1*])", scaffold.smiles)
         reactant = (Chem.MolFromSmiles(scaffold_smiles),)
 
         for i in substituents:
@@ -263,7 +263,6 @@ class RDKitConstructor(Constructor):
 
             rxn = rdChemReactions.ReactionFromSmarts(f"[*:1]-[{i}*]>>{substituent}")
             products = rxn.RunReactants(reactant)
-
             assert len(products) == 1 and len(products[0]) == 1
             reactant = products[0]
 
@@ -365,7 +364,7 @@ class OpenEyeConstructor(Constructor):  # pragma: no cover
         numbers = [
             atom.GetMapIdx()
             for atom in scaffold_molecule.GetAtoms()
-            if atom.GetMapIdx() != 0
+            if oechem.OEIsRGroup()(atom)
         ]
         return sorted(numbers)
 
@@ -377,7 +376,7 @@ class OpenEyeConstructor(Constructor):  # pragma: no cover
 
         from openeye import oechem
 
-        scaffold_smiles = re.sub(r"\(\[R([1-9])+]\)", r"([\1*])", scaffold.smiles)
+        scaffold_smiles = re.sub(r"\(\[R([0-9]+)]\)", r"([\1*])", scaffold.smiles)
 
         reactant = oechem.OEMol()
         oechem.OESmilesToMol(reactant, scaffold_smiles)
