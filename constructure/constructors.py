@@ -29,6 +29,19 @@ class Constructor(abc.ABC):
 
     @classmethod
     @abc.abstractmethod
+    def get_replaceable_r_groups(cls, scaffold: Scaffold) -> List[int]:
+        """Returns the R group numbers on a scaffold
+
+        Args:
+            scaffold: The scaffold with R groups defined.
+
+        Returns:
+            The enumerated R-group numbers
+        """
+        raise NotImplementedError()
+
+    @classmethod
+    @abc.abstractmethod
     def attach_substituents(
         cls, scaffold: Scaffold, substituents: Dict[int, str]
     ) -> str:
@@ -82,9 +95,13 @@ class Constructor(abc.ABC):
 
         # Begin by checking that the user has specified a set of substitutes for each
         # R groups on the scaffold.
-        n_expected_groups = cls.n_replaceable_groups(scaffold)
+        expected_r_groups = cls.get_replaceable_r_groups(scaffold)
 
-        missing_r_groups = {i + 1 for i in range(n_expected_groups)} - {*substituents}
+        if len(set(expected_r_groups)) != len(expected_r_groups):
+            r_group_str = ", ".join(sorted(f"R{i}" for i in expected_r_groups))
+            raise ValueError("Duplicate R-group values found in " + r_group_str)
+
+        missing_r_groups = {i for i in expected_r_groups if i not in substituents}
         missing_r_groups.update(i for i in substituents if len(substituents[i]) == 0)
 
         if len(missing_r_groups) > 0:
@@ -96,7 +113,7 @@ class Constructor(abc.ABC):
             )
 
         # Make sure the user didn't provide substituents for non-existent R substituents.
-        extra_r_groups = {*substituents} - {i + 1 for i in range(n_expected_groups)}
+        extra_r_groups = {i for i in substituents if i not in expected_r_groups}
 
         if len(extra_r_groups) > 0:
             extra_r_groups_string = ", ".join(f"R{i}" for i in extra_r_groups)
@@ -175,13 +192,14 @@ class Constructor(abc.ABC):
             cls.validate_substituents(scaffold, substituents)
 
         if mode == "combinatorial":
+            labeled = {
+                i: [(i, sub) for sub in subs] for i, subs in substituents.items()
+            }
 
-            combinations = itertools.product(
-                *(substituents[i + 1] for i in range(len(substituents)))
-            )
+            combinations = itertools.product(*(labeled[i] for i in labeled))
 
             group_combinations = [
-                {i + 1: substituent for i, substituent in enumerate(combination)}
+                {i: substituent for i, substituent in (combination)}
                 for combination in combinations
             ]
 
@@ -215,6 +233,20 @@ class RDKitConstructor(Constructor):
 
     @classmethod
     @requires_package("rdkit")
+    def get_replaceable_r_groups(cls, scaffold: Scaffold) -> List[int]:
+        from rdkit import Chem
+
+        scaffold_smiles = re.sub(r"\(\[R([0-9]+)]\)", r"([\1*:\1])", scaffold.smiles)
+        scaffold_molecule = Chem.MolFromSmiles(scaffold_smiles)
+        numbers = [
+            atom.GetAtomMapNum()
+            for atom in scaffold_molecule.GetAtoms()
+            if atom.HasProp("dummyLabel")
+        ]
+        return sorted(numbers)
+
+    @classmethod
+    @requires_package("rdkit")
     def attach_substituents(
         cls, scaffold: Scaffold, substituents: Dict[int, str]
     ) -> str:
@@ -222,16 +254,15 @@ class RDKitConstructor(Constructor):
         from rdkit import Chem
         from rdkit.Chem import rdChemReactions
 
-        scaffold_smiles = re.sub(r"\(\[R([1-9])+]\)", r"([\1*])", scaffold.smiles)
+        scaffold_smiles = re.sub(r"\(\[R([0-9]+)]\)", r"([\1*])", scaffold.smiles)
         reactant = (Chem.MolFromSmiles(scaffold_smiles),)
 
-        for i in range(len(substituents)):
+        for i in substituents:
 
-            substituent = substituents[i + 1].replace("[R]", "[*:1]")
+            substituent = substituents[i].replace("[R]", "[*:1]")
 
-            rxn = rdChemReactions.ReactionFromSmarts(f"[*:1]-[{i + 1}*]>>{substituent}")
+            rxn = rdChemReactions.ReactionFromSmarts(f"[*:1]-[{i}*]>>{substituent}")
             products = rxn.RunReactants(reactant)
-
             assert len(products) == 1 and len(products[0]) == 1
             reactant = products[0]
 
@@ -325,22 +356,36 @@ class OpenEyeConstructor(Constructor):  # pragma: no cover
 
     @classmethod
     @requires_oe_package("oechem")
+    def get_replaceable_r_groups(cls, scaffold: Scaffold) -> List[int]:
+        from openeye import oechem
+
+        scaffold_molecule = oechem.OEMol()
+        oechem.OESmilesToMol(scaffold_molecule, scaffold.smiles)
+        numbers = [
+            atom.GetMapIdx()
+            for atom in scaffold_molecule.GetAtoms()
+            if oechem.OEIsRGroup()(atom)
+        ]
+        return sorted(numbers)
+
+    @classmethod
+    @requires_oe_package("oechem")
     def attach_substituents(
         cls, scaffold: Scaffold, substituents: Dict[int, str]
     ) -> str:
 
         from openeye import oechem
 
-        scaffold_smiles = re.sub(r"\(\[R([1-9])+]\)", r"([\1*])", scaffold.smiles)
+        scaffold_smiles = re.sub(r"\(\[R([0-9]+)]\)", r"([\1*])", scaffold.smiles)
 
         reactant = oechem.OEMol()
         oechem.OESmilesToMol(reactant, scaffold_smiles)
 
-        for i in range(len(substituents)):
+        for i in substituents:
 
-            substituent = substituents[i + 1].replace("[R]", "[*:1]")
+            substituent = substituents[i].replace("[R]", "[*:1]")
 
-            rxn = oechem.OEUniMolecularRxn(f"[*:1]-[{i + 1}*]>>{substituent}")
+            rxn = oechem.OEUniMolecularRxn(f"[*:1]-[{i}*]>>{substituent}")
             rxn(reactant)
 
         return oechem.OEMolToSmiles(oechem.OEMol(reactant))
