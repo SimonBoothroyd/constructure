@@ -202,17 +202,35 @@ def test_remove_duplicate_smiles(constructor: Constructor):
 
 
 @pytest.mark.parametrize("constructor", CONSTRUCTORS)
-def test_enumerate_combinations_combinatorial(constructor: Constructor):
+@pytest.mark.parametrize(
+    "smiles, r_groups, substituents",
+    [
+        (
+            "C([R1])C(O)CC([R2])",
+            {1: ["alkyl"], 2: ["acyl"]},
+            {1: ["[R]C", "[R]CC"], 2: ["[R]C=O", "[R]C(=O)C"]},
+        ),
+        (
+            "C([R9])C(O)CC([R2])",
+            {9: ["alkyl"], 2: ["acyl"]},
+            {9: ["[R]C", "[R]CC"], 2: ["[R]C=O", "[R]C(=O)C"]},
+        ),
+    ],
+)
+def test_enumerate_combinations_combinatorial(
+    constructor: Constructor, smiles: str, r_groups: dict, substituents: dict
+):
 
     from rdkit import Chem
 
     scaffold = Scaffold(
-        smiles="C([R1])C(O)CC([R2])", r_groups={1: ["alkyl"], 2: ["acyl"]}
+        smiles=smiles,
+        r_groups=r_groups,
     )
 
     enumerated_smiles = constructor.enumerate_combinations(
         scaffold=scaffold,
-        substituents={1: ["[R]C", "[R]CC"], 2: ["[R]C=O", "[R]C(=O)C"]},
+        substituents=substituents,
         mode="combinatorial",
     )
 

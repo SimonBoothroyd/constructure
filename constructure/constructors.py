@@ -192,13 +192,14 @@ class Constructor(abc.ABC):
             cls.validate_substituents(scaffold, substituents)
 
         if mode == "combinatorial":
+            labeled = {
+                i: [(i, sub) for sub in subs] for i, subs in substituents.items()
+            }
 
-            combinations = itertools.product(
-                *(substituents[i + 1] for i in range(len(substituents)))
-            )
+            combinations = itertools.product(*(labeled[i] for i in labeled))
 
             group_combinations = [
-                {i + 1: substituent for i, substituent in enumerate(combination)}
+                {i: substituent for i, substituent in (combination)}
                 for combination in combinations
             ]
 
@@ -235,9 +236,7 @@ class RDKitConstructor(Constructor):
     def get_replaceable_r_groups(cls, scaffold: Scaffold) -> List[int]:
         from rdkit import Chem
 
-        scaffold_smiles = re.sub(
-            r"\(\[R(?P<num>[1-9])+]\)", r"([\1*:\g<num>])", scaffold.smiles
-        )
+        scaffold_smiles = re.sub(r"\(\[R([1-9])+]\)", r"([\1*:\1])", scaffold.smiles)
         scaffold_molecule = Chem.MolFromSmiles(scaffold_smiles)
         numbers = [
             atom.GetAtomMapNum()
@@ -383,11 +382,11 @@ class OpenEyeConstructor(Constructor):  # pragma: no cover
         reactant = oechem.OEMol()
         oechem.OESmilesToMol(reactant, scaffold_smiles)
 
-        for i in range(len(substituents)):
+        for i in substituents:
 
-            substituent = substituents[i + 1].replace("[R]", "[*:1]")
+            substituent = substituents[i].replace("[R]", "[*:1]")
 
-            rxn = oechem.OEUniMolecularRxn(f"[*:1]-[{i + 1}*]>>{substituent}")
+            rxn = oechem.OEUniMolecularRxn(f"[*:1]-[{i}*]>>{substituent}")
             rxn(reactant)
 
         return oechem.OEMolToSmiles(oechem.OEMol(reactant))
